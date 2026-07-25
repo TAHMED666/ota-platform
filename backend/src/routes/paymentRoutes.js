@@ -2,12 +2,14 @@ const express = require('express');
 const { body } = require('express-validator');
 const { checkout } = require('../controllers/paymentController');
 const { authenticate } = require('../middleware/authMiddleware');
+const { apiRateLimiter } = require('../middleware/rateLimitMiddleware');
 const { validateRequest } = require('../middleware/validateRequest');
 
 const router = express.Router();
 
 router.post(
   '/checkout',
+  apiRateLimiter,
   authenticate,
   [body('bookingType').isIn(['flight', 'hotel']), body('bookingId').isUUID(), body('amount').isFloat({ gt: 0 })],
   validateRequest,

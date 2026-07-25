@@ -2,6 +2,7 @@ const express = require('express');
 const { body } = require('express-validator');
 const { createReview, listReviews } = require('../controllers/reviewController');
 const { authenticate } = require('../middleware/authMiddleware');
+const { apiRateLimiter } = require('../middleware/rateLimitMiddleware');
 const { validateRequest } = require('../middleware/validateRequest');
 
 const router = express.Router();
@@ -9,6 +10,7 @@ const router = express.Router();
 router.get('/', listReviews);
 router.post(
   '/',
+  apiRateLimiter,
   authenticate,
   [
     body('entityType').isIn(['flight', 'hotel']),
